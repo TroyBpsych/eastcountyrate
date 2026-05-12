@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>East County Demographics & Enrollment Atlas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=JetBrains+Mono:wght@300;400;500;700&family=Inter+Tight:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --bg-card: #ffffff;
+    --ink: #1a1410;
+    --ink-soft: #4a3d33;
+    --ink-faint: #8a7a6a;
+    --rule: #d8d0c1;
+    --paper: #e8e2d4;
+    --accent: #8b1c1c;
+    --accent-2: #2c5f2d;
+    --accent-3: #4a3aff;
+
+    --c-births:   #8b1c1c;
+    --c-cvusd:    #2c5f2d;
+    --c-lmsv:     #c47817;
+    --c-guhsd:    #4a3aff;
+    --c-pca:      #b8336a;
+    --c-lfcs:     #5d4037;
+    --c-bostonia: #00838f;
+    --c-eje:      #6b4c93;
+    --c-kidinnu:  #aa6d39;
+    --c-altus:    #708090;
+    --c-apps:     #d62828;
+    --c-cohort:   #1d3557;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--ink); font-family: 'Inter Tight', sans-serif; -webkit-font-smoothing: antialiased; }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(circle at 25% 30%, rgba(139, 28, 28, 0.025) 0%, transparent 50%),
+      radial-gradient(circle at 75% 80%, rgba(44, 95, 45, 0.025) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .container { max-width: 1400px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
+
+  .masthead {
+    border-bottom: 4px double var(--ink);
+    padding: 48px 0 24px;
+    margin-bottom: 32px;
+  }
+  .masthead .kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--ink-soft);
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .masthead h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: clamp(40px, 5vw, 72px);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+    font-variation-settings: "opsz" 144;
+  }
+  .masthead h1 em { font-style: italic; color: var(--accent); font-weight: 400; }
+  .masthead .standfirst {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    line-height: 1.45;
+    color: var(--ink-soft);
+    max-width: 800px;
+    font-weight: 300;
+    font-style: italic;
+  }
+
+  section { margin-bottom: 56px; }
+  .section-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 12px; margin-bottom: 24px;
+    gap: 16px; flex-wrap: wrap;
+  }
+  .section-head h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 28px;
+    letter-spacing: -0.01em;
+  }
+  .section-head .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+  }
+
+  .panel {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    box-shadow: 0 1px 0 var(--rule), 0 6px 24px -12px rgba(26, 20, 16, 0.08);
+    overflow: hidden;
+  }
+  .panel-head {
+    padding: 24px 28px 0;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 16px; flex-wrap: wrap;
+  }
+  .panel-title {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .panel-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--ink-faint);
+    margin-top: 6px;
+  }
+
+  .toggle-groups {
+    padding: 16px 28px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .toggle-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+  .toggle-group-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--ink-faint);
+    margin-right: 4px;
+    min-width: 110px;
+  }
+  .toggle {
+    appearance: none; border: none; background: transparent;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    color: var(--ink-soft);
+    display: inline-flex; align-items: center; gap: 8px;
+    user-select: none;
+  }
+  .toggle .swatch {
+    display: inline-block;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--swatch);
+    opacity: 0.4;
+    transition: opacity 0.15s ease;
+  }
+  .toggle:hover { border-color: var(--ink-soft); color: var(--ink); }
+  .toggle.active {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+  .toggle.active .swatch { opacity: 1; }
+
+  .chart-wrap {
+    padding: 12px 12px 16px;
+    position: relative;
+  }
+  #mainChart {
+    width: 100%;
+    height: auto;
+    display: block;
+    max-height: 560px;
+  }
+  .axis-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    fill: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .axis-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    fill: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-weight: 700;
+  }
+  .grid-line { stroke: var(--rule); stroke-width: 1; }
+  .data-line { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .data-line.gap { stroke-dasharray: 3 4; opacity: 0.5; }
+  .data-line.projected { stroke-dasharray: 5 3; opacity: 0.7; }
+  .data-point { stroke-width: 2; fill: var(--bg-card); }
+  .data-area { fill-opacity: 0.06; }
+  .annotation-line { stroke: var(--ink-faint); stroke-width: 1; stroke-dasharray: 2 3; }
+  .annotation-text {
+    font-family: 'Fraunces', serif;
+    font-size: 11px;
+    font-style: italic;
+    fill: var(--ink-soft);
+  }
+
+  .tooltip {
+    position: absolute;
+    background: var(--ink);
+    color: var(--bg);
+    padding: 12px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    line-height: 1.6;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.1s ease;
+    border-radius: 2px;
+    box-shadow: 0 8px 24px rgba(26, 20, 16, 0.2);
+    max-width: 280px;
+    z-index: 10;
+  }
+  .tooltip .t-year {
+    font-family: 'Fraunces', serif;
+    font-size: 14px;
+    font-style: italic;
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(244, 241, 234, 0.2);
+  }
+  .tooltip .t-row { display: flex; justify-content: space-between; gap: 16px; }
+  .tooltip .t-row .label { display: inline-flex; align-items: center; gap: 6px; }
+  .tooltip .t-row .swatch { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .tooltip .t-row .value { font-weight: 700; }
+
+  .mode-controls {
+    display: flex; gap: 4px;
+    padding: 4px;
+    background: var(--paper);
+    border-radius: 4px;
+    align-self: flex-start;
+  }
+  .mode-btn {
+    appearance: none; border: none; background: transparent;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 8px 14px;
+    border-radius: 3px;
+    cursor: pointer;
+    color: var(--ink-soft);
+    transition: all 0.15s ease;
+  }
+  .mode-btn.active {
+    background: var(--bg-card);
+    color: var(--ink);
+    box-shadow: 0 1px 2px rgba(26, 20, 16, 0.1);
+  }
+  .mode-explain {
+    padding: 4px 28px 12px;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.4;
+    max-width: 800px;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    background: var(--bg-card);
+  }
+  .stat {
+    padding: 24px;
+    border-right: 1px solid var(--rule);
+    position: relative;
+  }
+  .stat:last-child { border-right: none; }
+  .stat .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--ink-faint);
+    margin-bottom: 8px;
+  }
+  .stat .value {
+    font-family: 'Fraunces', serif;
+    font-size: 36px;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .stat .value .unit {
+    font-size: 16px;
+    color: var(--ink-faint);
+    font-weight: 400;
+    margin-left: 4px;
+  }
+  .stat .delta {
+    margin-top: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  .stat .delta.neg { color: var(--c-births); }
+  .stat .delta.pos { color: var(--c-cvusd); }
+
+  .cohort-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 16px;
+  }
+  @media (max-width: 800px) {
+    .cohort-panel { grid-template-columns: 1fr; }
+  }
+  .cohort-control {
+    padding: 24px 28px;
+  }
+  .cohort-control > label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--ink-faint);
+    display: block; margin-bottom: 12px;
+  }
+  .cohort-year-display {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+  .cohort-year-display em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .slider-wrap { position: relative; padding: 8px 0 32px; }
+  .slider {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 2px;
+    background: var(--rule);
+    outline: none;
+    border-radius: 1px;
+  }
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px; height: 24px;
+    background: var(--ink);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 4px solid var(--bg-card);
+    box-shadow: 0 0 0 1px var(--ink);
+  }
+  .slider::-moz-range-thumb {
+    width: 18px; height: 18px;
+    background: var(--ink);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 4px solid var(--bg-card);
+    box-shadow: 0 0 0 1px var(--ink);
+  }
+  .slider-ticks {
+    position: relative;
+    display: flex; justify-content: space-between;
+    margin-top: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-faint);
+  }
+  .cohort-readout {
+    margin-top: 24px;
+    padding: 20px;
+    background: var(--paper);
+    border-left: 3px solid var(--accent);
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  .cohort-readout .big {
+    font-family: 'Fraunces', serif;
+    font-size: 48px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: var(--accent);
+    display: block;
+    line-height: 1;
+    margin: 8px 0;
+  }
+  .cohort-readout .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--ink-faint);
+  }
+  .cohort-readout em { font-style: italic; color: var(--ink-soft); }
+
+  .cohort-viz {
+    padding: 24px 28px;
+    border-left: 1px solid var(--rule);
+  }
+  @media (max-width: 800px) {
+    .cohort-viz { border-left: none; border-top: 1px solid var(--rule); }
+  }
+  .cohort-flow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 24px 0;
+  }
+  .flow-node {
+    flex: 1;
+    text-align: center;
+    padding: 16px 8px;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    background: var(--bg-card);
+    min-width: 0;
+  }
+  .flow-node .y {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .flow-node .v {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-weight: 500;
+    margin: 4px 0;
+  }
+  .flow-node .desc {
+    font-size: 10px;
+    color: var(--ink-soft);
+    line-height: 1.3;
+  }
+  .flow-arrow {
+    flex: 0 0 20px;
+    color: var(--ink-faint);
+    font-size: 18px;
+    text-align: center;
+  }
+
+  .stories {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 0;
+    margin-top: 32px;
+  }
+  .story {
+    padding: 28px 32px;
+    border-left: 1px solid var(--rule);
+    background: var(--bg-card);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    position: relative;
+  }
+  .story:first-child { border-left: 1px solid var(--rule); }
+  .story:last-child { border-right: 1px solid var(--rule); }
+  .story::before {
+    content: '';
+    position: absolute;
+    top: 28px; left: 32px;
+    width: 32px; height: 2px;
+    background: var(--story-accent, var(--accent));
+  }
+  .story .year {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--story-accent, var(--accent));
+    margin-top: 16px; margin-bottom: 8px;
+    letter-spacing: 0.15em;
+    font-weight: 700;
+  }
+  .story h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin-bottom: 12px;
+  }
+  .story p {
+    font-family: 'Fraunces', serif;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    font-weight: 300;
+  }
+
+  .snapshot {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+  }
+  .snapshot-year-selector {
+    display: flex;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--rule);
+  }
+  .year-btn {
+    appearance: none; border: none;
+    background: transparent;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 12px 16px;
+    cursor: pointer;
+    color: var(--ink-soft);
+    border-right: 1px solid var(--rule);
+    transition: all 0.1s ease;
+    letter-spacing: 0.05em;
+  }
+  .year-btn:hover { background: var(--paper); color: var(--ink); }
+  .year-btn.active {
+    background: var(--ink);
+    color: var(--bg);
+  }
+  .snapshot-section-head {
+    padding: 20px 32px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--ink-faint);
+  }
+  .snapshot-section-head:not(:first-child) {
+    border-top: 1px solid var(--rule);
+    margin-top: 8px;
+  }
+  .snapshot-grid {
+    padding: 16px 32px 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+  }
+  .snapshot-block .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--ink-faint);
+    margin-bottom: 8px;
+  }
+  .snapshot-block .big-val {
+    font-family: 'Fraunces', serif;
+    font-size: 40px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .snapshot-block .ctx {
+    margin-top: 8px;
+    font-family: 'Fraunces', serif;
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-style: italic;
+    line-height: 1.4;
+  }
+  .snapshot-empty {
+    padding: 24px 32px;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    color: var(--ink-faint);
+    font-size: 14px;
+  }
+
+  footer {
+    border-top: 4px double var(--ink);
+    padding: 32px 0 48px;
+    margin-top: 56px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    text-align: center;
+  }
+  footer span { color: var(--ink-soft); }
+
+  @media (max-width: 720px) {
+    .container { padding: 0 16px; }
+    .panel-head { padding: 20px 20px 0; }
+    .toggle-groups { padding: 12px 20px 0; }
+    .toggle-group { gap: 6px; }
+    .toggle-group-label { min-width: 0; flex-basis: 100%; }
+    .chart-wrap { padding: 8px 4px 12px; }
+    .mode-explain { padding: 4px 20px 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header class="masthead">
+  <div class="kicker">
+    <span>An Atlas · Vol. I · Issue 2</span>
+    <span id="updatedDate">Compiled May 2026</span>
+  </div>
+  <h1>East County <em>by the numbers</em></h1>
+  <p class="standfirst">A reader for births, enrollment, and the cohorts moving through El Cajon's schools — verified against CDPH, HHSA, the U.S. Census Bureau, March of Dimes, and ed-data.org.</p>
+</header>
+
+<section>
+  <div class="section-head">
+    <div><h2>The overlay</h2></div>
+    <div class="num">§1 · Trend comparison</div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-title">Compare any combination, on a shared timeline</div>
+        <div class="panel-sub">Click a series to add or remove · Hover for values · Switch view below</div>
+      </div>
+      <div class="mode-controls">
+        <button class="mode-btn active" data-mode="absolute">Absolute</button>
+        <button class="mode-btn" data-mode="indexed">Indexed</button>
+      </div>
+    </div>
+
+    <p class="mode-explain" id="modeExplain"></p>
+
+    <div class="toggle-groups">
+      <div class="toggle-group">
+        <span class="toggle-group-label">Demographic</span>
+        <button class="toggle active" data-series="births" style="--swatch: var(--c-births);">
+          <span class="swatch"></span>SD County Births
+        </button>
+        <button class="toggle" data-series="cohort" style="--swatch: var(--c-cohort);">
+          <span class="swatch"></span>East Cty K-Age Cohort
+        </button>
+      </div>
+      <div class="toggle-group">
+        <span class="toggle-group-label">Public Districts</span>
+        <button class="toggle active" data-series="cvusd" style="--swatch: var(--c-cvusd);">
+          <span class="swatch"></span>CVUSD (K-8)
+        </button>
+        <button class="toggle" data-series="lmsv" style="--swatch: var(--c-lmsv);">
+          <span class="swatch"></span>LMSV (K-8)
+        </button>
+        <button class="toggle" data-series="guhsd" style="--swatch: var(--c-guhsd);">
+          <span class="swatch"></span>GUHSD (9-12)
+        </button>
+      </div>
+      <div class="toggle-group">
+        <span class="toggle-group-label">Charters</span>
+        <button class="toggle" data-series="pca" style="--swatch: var(--c-pca);">
+          <span class="swatch"></span>Pacific Coast Acad.
+        </button>
+        <button class="toggle" data-series="lfcs" style="--swatch: var(--c-lfcs);">
+          <span class="swatch"></span>Literacy First
+        </button>
+        <button class="toggle" data-series="bostonia" style="--swatch: var(--c-bostonia);">
+          <span class="swatch"></span>Bostonia Global
+        </button>
+        <button class="toggle" data-series="kidinnu" style="--swatch: var(--c-kidinnu);">
+          <span class="swatch"></span>Kidinnu Academy
+        </button>
+      </div>
+      <div class="toggle-group">
+        <span class="toggle-group-label">Leading Indicator</span>
+        <button class="toggle active" data-series="apps" style="--swatch: var(--c-apps);">
+          <span class="swatch"></span>LFCS Kinder Apps
+        </button>
+      </div>
+    </div>
+
+    <div class="chart-wrap">
+      <svg id="mainChart" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet"></svg>
+      <div class="tooltip" id="tooltip"></div>
+    </div>
+  </div>
+
+  <div class="stats" id="statsStrip"></div>
+</section>
+
+<section>
+  <div class="section-head">
+    <div><h2>The cohort tracer</h2></div>
+    <div class="num">§2 · Births → Future kindergarteners</div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-title">Drag the year — see where the cohort goes</div>
+        <div class="panel-sub">Kindergarteners in year X were born in year X−5</div>
+      </div>
+    </div>
+
+    <div class="cohort-panel">
+      <div class="cohort-control">
+        <label>Birth year</label>
+        <div class="cohort-year-display" id="cohortYearDisplay"></div>
+        <div class="slider-wrap">
+          <input type="range" id="cohortSlider" class="slider" min="2014" max="2024" step="1" value="2021">
+          <div class="slider-ticks">
+            <span>2014</span><span>2016</span><span>2018</span><span>2020</span><span>2022</span><span>2024</span>
+          </div>
+        </div>
+        <div class="cohort-readout" id="cohortReadout"></div>
+      </div>
+
+      <div class="cohort-viz">
+        <div class="cohort-flow" id="cohortFlow"></div>
+        <p style="font-family: 'Fraunces', serif; font-style: italic; font-size: 14px; line-height: 1.5; color: var(--ink-soft); margin-top: 8px;">
+          Funnel from countywide births down to East County kindergarten-age children, using the East County share (14.5%) of the county total. A typical reduction (~5.5%) accounts for homeschool, delayed entry, private K, or out-migration before the kids actually enroll in traditional kindergarten.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-head">
+    <div><h2>Year snapshot</h2></div>
+    <div class="num">§3 · Pick a school year</div>
+  </div>
+
+  <div class="snapshot">
+    <div class="snapshot-year-selector" id="yearSelector"></div>
+    <div id="snapshotBody"></div>
+  </div>
+</section>
+
+<section>
+  <div class="section-head">
+    <div><h2>The events that bent the lines</h2></div>
+    <div class="num">§4 · Five reasons the curves moved</div>
+  </div>
+
+  <div class="stories">
+    <article class="story" style="--story-accent: var(--c-births);">
+      <div class="year">2015 · The peak</div>
+      <h3>Births topped out</h3>
+      <p>San Diego County hit 44,442 births in 2015 — the high-water mark for the past decade. From here, the line bent down. By 2023 the county was at 35,713, a decline of 19.6%.</p>
+    </article>
+
+    <article class="story" style="--story-accent: var(--c-pca);">
+      <div class="year">2019–2024 · The shift</div>
+      <h3>Independent study took over</h3>
+      <p>Pacific Coast Academy, a Dehesa-authorized independent-study charter, grew from 2,797 students to 6,760 — more than doubling — while in-person charters held flat or shrank. The structural charter story in East County is the IS model.</p>
+    </article>
+
+    <article class="story" style="--story-accent: var(--c-births);">
+      <div class="year">2021 · Pandemic conceptions</div>
+      <h3>The sharpest drop</h3>
+      <p>Births fell to 36,611 in 2021, down 6.3% in a single year. Babies conceived during the lockdown spring of 2020 became the smallest cohort of the decade — kindergarteners in 2026–27.</p>
+    </article>
+
+    <article class="story" style="--story-accent: var(--c-cvusd);">
+      <div class="year">2023–2024 · The newcomers</div>
+      <h3>CVUSD jumped 19%</h3>
+      <p>Cajon Valley Unified added 2,920 students in one year, going from 15,607 to 18,527. Per the district's own LCAP: 2,300 new students enrolled Aug 2023–Apr 2024, with 39% arriving from another country. El Cajon's role as a receiving district reshapes enrollment in ways births can't predict.</p>
+    </article>
+
+    <article class="story" style="--story-accent: var(--c-apps);">
+      <div class="year">2019–2026 · The leading indicator</div>
+      <h3>LFCS applications fell 44%</h3>
+      <p>Literacy First's kindergarten applications dropped from 318 in 2019 to 178 in 2026. That's more than twice the decline in county births over the same period — suggesting demand is shifting away from in-person charters faster than the demographic baseline.</p>
+    </article>
+  </div>
+</section>
+
+<footer>
+  Sources: <span>CDPH · HHSA · U.S. Census Bureau Vintage · March of Dimes PeriStats · ed-data.org · CDE DataQuest · CVUSD LCAP</span>
+</footer>
+
+</div>
+
+<script>
+// ============================================================
+// DATA - using [year, value] tuples; nulls represented by absence
+// ============================================================
+const YEARS_SCHOOL = ['2014-15','2015-16','2016-17','2017-18','2018-19','2019-20','2020-21','2021-22','2022-23','2023-24','2024-25'];
+
+const SERIES = {
+  births: {
+    label: 'SD County Births',
+    color: 'var(--c-births)',
+    unit: 'births',
+    yearType: 'calendar',
+    points: [
+      [2014, 44247], [2015, 44442], [2016, 43311], [2017, 43942],
+      [2018, 40888], [2019, 39369], [2020, 39080], [2021, 36611],
+      [2022, 37683], [2023, 35713], [2024, 36036]
+    ]
+  },
+  cohort: {
+    label: 'East Cty K-Age Cohort',
+    color: 'var(--c-cohort)',
+    unit: 'children',
+    yearType: 'calendar',
+    points: [
+      [2014, 6416], [2015, 6444], [2016, 6280], [2017, 6372],
+      [2018, 5929], [2019, 5709], [2020, 5667], [2021, 5309],
+      [2022, 5464], [2023, 5178], [2024, 5225]
+    ]
+  },
+  cvusd: {
+    label: 'CVUSD (K-8)',
+    color: 'var(--c-cvusd)',
+    unit: 'students',
+    yearType: 'school',
+    points: [
+      [2014, 16601], [2015, 16645], [2016, 16924], [2017, 17369],
+      [2018, 16666], [2019, 16419], [2020, 15776], [2021, 14799],
+      [2022, 15337], [2023, 15607], [2024, 18527]
+    ]
+  },
+  lmsv: {
+    label: 'LMSV (K-8)',
+    color: 'var(--c-lmsv)',
+    unit: 'students',
+    yearType: 'school',
+    points: [
+      [2021, 11400], [2023, 10816], [2024, 10616]
+    ]
+  },
+  guhsd: {
+    label: 'GUHSD (9-12)',
+    color: 'var(--c-guhsd)',
+    unit: 'students',
+    yearType: 'school',
+    points: [
+      [2024, 21694]
+    ]
+  },
+  pca: {
+    label: 'Pacific Coast Academy',
+    color: 'var(--c-pca)',
+    unit: 'students',
+    yearType: 'school',
+    points: [
+      [2019, 2797], [2020, 3978], [2021, 4492],
+      [2022, 4891], [2023, 5612], [2024, 6760]
+    ]
+  },
+  lfcs: {
+    label: 'Literacy First',
+    color: 'var(--c-lfcs)',
+    unit: 'students',
+    yearType: 'school',
+    points: [
+      [2023, 2050], [2024, 2160],
+      [2025, 2050, true], [2026, 2050, true]  // 3rd element = projection flag
+    ]
+  },
+  bostonia: {
+    label: 'Bostonia Global',
+    color: 'var(--c-bostonia)',
+    unit: 'students',
+    yearType: 'school',
+    points: [
+      [2023, 1175], [2024, 1266]
+    ]
+  },
+  kidinnu: {
+    label: 'Kidinnu Academy',
+    color: 'var(--c-kidinnu)',
+    unit: 'students',
+    yearType: 'school',
+    points: [
+      [2019, 115], [2020, 173], [2021, 212],
+      // 2022 deliberately missing — line will dash across gap
+      [2023, 338], [2024, 433]
+    ]
+  },
+  apps: {
+    label: 'LFCS Kinder Apps',
+    color: 'var(--c-apps)',
+    unit: 'applications',
+    yearType: 'calendar',
+    points: [
+      [2015, 210], [2016, 197], [2017, 216], [2018, 226],
+      [2019, 318], [2020, 283], [2021, 305], [2022, 262],
+      [2023, 266], [2024, 238], [2025, 198], [2026, 178]
+    ]
+  }
+};
+
+const ANNOTATIONS = [
+  { year: 2021, label: 'Pandemic-conception drop', series: 'births' },
+  { year: 2024, label: 'Newcomer surge (CVUSD)', series: 'cvusd' },
+];
+
+const INDEX_REF_YEAR = 2019;
+
+const state = {
+  active: new Set(['births', 'cvusd', 'apps']),
+  mode: 'absolute',
+  cohortYear: 2021,
+  snapshotYear: '2024-25',
+};
+
+// ============================================================
+// HELPERS
+// ============================================================
+function valueAt(seriesKey, year) {
+  const p = SERIES[seriesKey].points.find(pt => pt[0] === year);
+  return p ? p[1] : null;
+}
+
+function indexBaseline(seriesKey) {
+  const pts = SERIES[seriesKey].points;
+  const exact = pts.find(p => p[0] === INDEX_REF_YEAR);
+  if (exact) return { value: exact[1], year: exact[0] };
+  let closest = pts[0];
+  let bestDist = Math.abs(pts[0][0] - INDEX_REF_YEAR);
+  for (const p of pts) {
+    const d = Math.abs(p[0] - INDEX_REF_YEAR);
+    if (d < bestDist) { closest = p; bestDist = d; }
+  }
+  return { value: closest[1], year: closest[0] };
+}
+
+// A point is a projection if it has a truthy 3rd element
+function isProjection(pt) { return !!pt[2]; }
+
+// Build segments of continuous data, plus dashed bridges across gaps.
+// Also splits at the verified->projection boundary so projected
+// segments can render with a distinct style.
+function buildSegments(points) {
+  if (points.length === 0) return [];
+  const sorted = [...points].sort((a, b) => a[0] - b[0]);
+  const segments = [];
+  let current = [sorted[0]];
+  for (let i = 1; i < sorted.length; i++) {
+    const prev = sorted[i - 1];
+    const cur = sorted[i];
+    const yearGap = cur[0] - prev[0] > 1;
+    const projectionBoundary = isProjection(prev) !== isProjection(cur);
+
+    if (yearGap) {
+      if (current.length > 0) segments.push({ pts: current, gap: false, projected: isProjection(prev) });
+      segments.push({ pts: [prev, cur], gap: true, projected: isProjection(cur) });
+      current = [cur];
+    } else if (projectionBoundary) {
+      // Close the current verified segment, then start a projected segment
+      // that begins at the previous point so the line is continuous
+      if (current.length > 0) segments.push({ pts: current, gap: false, projected: isProjection(prev) });
+      current = [prev, cur];
+    } else {
+      current.push(cur);
+    }
+  }
+  if (current.length > 0) segments.push({ pts: current, gap: false, projected: isProjection(current[current.length - 1]) });
+  return segments;
+}
+
+function fmtNumber(n) {
+  return n.toLocaleString('en-US', { maximumFractionDigits: 0 });
+}
+
+function fmtIndexed(n) {
+  return n.toFixed(2);
+}
+
+function toSchoolYear(startYear) {
+  const yy = ((startYear + 1) % 100).toString().padStart(2, '0');
+  return `${startYear}-${yy}`;
+}
+
+// ============================================================
+// CHART RENDER
+// ============================================================
+const svg = document.getElementById('mainChart');
+const tooltip = document.getElementById('tooltip');
+const chartWrap = svg.parentElement;
+const modeExplain = document.getElementById('modeExplain');
+
+const SVG_W = 1000, SVG_H = 560;
+const M = { top: 36, right: 200, bottom: 60, left: 88 };
+const PLOT_W = SVG_W - M.left - M.right;
+const PLOT_H = SVG_H - M.top - M.bottom;
+
+function yearToX(y) {
+  const minY = 2014, maxY = 2026;
+  return M.left + ((y - minY) / (maxY - minY)) * PLOT_W;
+}
+
+function getDomain() {
+  let min = Infinity, max = -Infinity;
+  state.active.forEach(key => {
+    const pts = SERIES[key].points;
+    if (state.mode === 'indexed') {
+      const base = indexBaseline(key);
+      pts.forEach(p => {
+        const v = p[1] / base.value;
+        if (v < min) min = v;
+        if (v > max) max = v;
+      });
+    } else {
+      pts.forEach(p => {
+        if (p[1] < min) min = p[1];
+        if (p[1] > max) max = p[1];
+      });
+    }
+  });
+  if (!isFinite(min) || !isFinite(max)) { min = 0; max = 1; }
+  const pad = (max - min) * 0.1 || 0.1;
+  return [Math.max(0, min - pad), max + pad];
+}
+
+function valueToY(v, domain) {
+  const [lo, hi] = domain;
+  if (hi === lo) return M.top + PLOT_H / 2;
+  return M.top + PLOT_H - ((v - lo) / (hi - lo)) * PLOT_H;
+}
+
+function getActiveUnits() {
+  const units = new Set();
+  state.active.forEach(key => units.add(SERIES[key].unit));
+  return Array.from(units);
+}
+
+function svgEl(tag, attrs) {
+  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+  return el;
+}
+
+function render() {
+  svg.innerHTML = '';
+  const domain = getDomain();
+  const indexed = state.mode === 'indexed';
+
+  // Y-axis title
+  const units = getActiveUnits();
+  const yTitle = indexed
+    ? `Indexed (ref. ${INDEX_REF_YEAR} = 1.00)`
+    : units.length === 1 ? units[0] : 'mixed units — see series labels';
+  const yTitleEl = svgEl('text', {
+    x: -(M.top + PLOT_H / 2),
+    y: 22,
+    transform: 'rotate(-90)',
+    class: 'axis-title',
+    'text-anchor': 'middle',
+  });
+  yTitleEl.textContent = yTitle.toUpperCase();
+  svg.appendChild(yTitleEl);
+
+  // X-axis title
+  const xTitleEl = svgEl('text', {
+    x: M.left + PLOT_W / 2,
+    y: SVG_H - 12,
+    class: 'axis-title',
+    'text-anchor': 'middle',
+  });
+  xTitleEl.textContent = 'YEAR';
+  svg.appendChild(xTitleEl);
+
+  // Y grid + labels
+  const yTicks = 5;
+  for (let i = 0; i <= yTicks; i++) {
+    const v = domain[0] + (domain[1] - domain[0]) * (i / yTicks);
+    const y = valueToY(v, domain);
+    svg.appendChild(svgEl('line', { x1: M.left, x2: M.left + PLOT_W, y1: y, y2: y, class: 'grid-line' }));
+    const text = svgEl('text', { x: M.left - 10, y: y + 4, class: 'axis-label', 'text-anchor': 'end' });
+    text.textContent = indexed ? fmtIndexed(v) : fmtNumber(v);
+    svg.appendChild(text);
+  }
+
+  // X ticks
+  const xYears = [2014, 2016, 2018, 2020, 2022, 2024, 2026];
+  xYears.forEach(y => {
+    const x = yearToX(y);
+    svg.appendChild(svgEl('line', {
+      x1: x, x2: x, y1: M.top + PLOT_H, y2: M.top + PLOT_H + 4,
+      stroke: 'var(--ink-faint)', 'stroke-width': 1
+    }));
+    const text = svgEl('text', { x: x, y: M.top + PLOT_H + 20, class: 'axis-label', 'text-anchor': 'middle' });
+    text.textContent = y;
+    svg.appendChild(text);
+  });
+
+  // Annotations
+  let annotIdx = 0;
+  ANNOTATIONS.forEach(a => {
+    if (!state.active.has(a.series)) return;
+    const x = yearToX(a.year);
+    svg.appendChild(svgEl('line', {
+      x1: x, x2: x, y1: M.top, y2: M.top + PLOT_H, class: 'annotation-line'
+    }));
+    const text = svgEl('text', {
+      x: x + 6, y: M.top + 14 + annotIdx * 16, class: 'annotation-text'
+    });
+    text.textContent = a.label;
+    svg.appendChild(text);
+    annotIdx++;
+  });
+
+  // Series
+  const drawnLabels = [];
+  state.active.forEach(key => {
+    const s = SERIES[key];
+    const base = indexed ? indexBaseline(key) : null;
+    const pts = s.points;
+    if (pts.length === 0) return;
+
+    const coords = pts.map(p => {
+      const yr = p[0], val = p[1], proj = isProjection(p);
+      const v = indexed ? val / base.value : val;
+      return { x: yearToX(yr), y: valueToY(v, domain), value: val, year: yr, projected: proj };
+    });
+
+    const segments = buildSegments(pts);
+
+    // Area fill - only when ≤3 series active and absolute mode, only over continuous VERIFIED segments
+    if (state.active.size <= 3 && !indexed && coords.length > 1) {
+      segments.forEach(seg => {
+        if (seg.gap) return;
+        if (seg.projected) return;  // No area under projected segments
+        if (seg.pts.length < 2) return;
+        const segCoords = seg.pts.map(([yr, val]) => ({
+          x: yearToX(yr), y: valueToY(val, domain)
+        }));
+        const areaPath = `M ${segCoords[0].x} ${M.top + PLOT_H} L ${segCoords.map(c => `${c.x} ${c.y}`).join(' L ')} L ${segCoords[segCoords.length - 1].x} ${M.top + PLOT_H} Z`;
+        svg.appendChild(svgEl('path', { d: areaPath, class: 'data-area', fill: s.color }));
+      });
+    }
+
+    // Lines per segment
+    segments.forEach(seg => {
+      if (seg.pts.length < 2) return;
+      const segCoords = seg.pts.map(p => {
+        const v = indexed ? p[1] / base.value : p[1];
+        return { x: yearToX(p[0]), y: valueToY(v, domain) };
+      });
+      const linePath = `M ${segCoords.map(c => `${c.x} ${c.y}`).join(' L ')}`;
+      // Determine line style:
+      //   - gap: dashed faint (existing)
+      //   - projected: dashed with lower opacity to signal "not verified"
+      //   - normal: solid
+      let cls = 'data-line';
+      if (seg.gap) cls += ' gap';
+      else if (seg.projected) cls += ' projected';
+      svg.appendChild(svgEl('path', {
+        d: linePath,
+        class: cls,
+        stroke: s.color
+      }));
+    });
+
+    // Single-point series - bigger marker
+    if (pts.length === 1) {
+      const c = coords[0];
+      svg.appendChild(svgEl('circle', {
+        cx: c.x, cy: c.y, r: 6,
+        fill: c.projected ? 'var(--bg-card)' : s.color,
+        stroke: s.color, 'stroke-width': 2,
+        'stroke-dasharray': c.projected ? '2 2' : 'none',
+      }));
+    }
+
+    // Data points: projected points get a hollow/dashed treatment
+    coords.forEach(c => {
+      if (c.projected) {
+        // Hollow square-ish marker for projections
+        svg.appendChild(svgEl('circle', {
+          cx: c.x, cy: c.y, r: 4,
+          fill: 'var(--bg-card)',
+          stroke: s.color,
+          'stroke-width': 2,
+          'stroke-dasharray': '2 2',
+        }));
+      } else {
+        svg.appendChild(svgEl('circle', {
+          cx: c.x, cy: c.y, r: 4,
+          class: 'data-point',
+          stroke: s.color,
+        }));
+      }
+    });
+
+    // End-of-line label with collision avoidance
+    const lastCoord = coords[coords.length - 1];
+    let labelY = lastCoord.y + 4;
+    while (drawnLabels.some(ly => Math.abs(ly - labelY) < 14)) {
+      labelY += 14;
+    }
+    drawnLabels.push(labelY);
+
+    const lblText = svgEl('text', {
+      x: lastCoord.x + 10,
+      y: labelY,
+      fill: s.color,
+      'font-family': 'JetBrains Mono, monospace',
+      'font-size': 11,
+      'font-weight': 700,
+    });
+    lblText.textContent = s.label.length > 18 ? s.label.slice(0, 16) + '…' : s.label;
+    svg.appendChild(lblText);
+  });
+
+  // Hover hit zones
+  const allYears = [2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026];
+  allYears.forEach(yr => {
+    const x = yearToX(yr);
+    const hitWidth = PLOT_W / (allYears.length - 1);
+    const hit = svgEl('rect', {
+      x: x - hitWidth / 2,
+      y: M.top,
+      width: hitWidth,
+      height: PLOT_H,
+      fill: 'transparent',
+    });
+    hit.addEventListener('mouseenter', () => showTooltip(yr));
+    hit.addEventListener('mousemove', e => moveTooltip(e));
+    hit.addEventListener('mouseleave', hideTooltip);
+    svg.appendChild(hit);
+  });
+
+  // Mode explainer
+  if (indexed) {
+    // Note baselines that don't match the reference year
+    const offBaseline = [];
+    state.active.forEach(key => {
+      const b = indexBaseline(key);
+      if (b.year !== INDEX_REF_YEAR) {
+        offBaseline.push(`${SERIES[key].label} (baseline ${b.year})`);
+      }
+    });
+    let explain = `Every visible series is scaled so its ${INDEX_REF_YEAR} value equals 1.00 — you compare shapes of change, not raw magnitudes.`;
+    if (offBaseline.length > 0) {
+      explain += ` Series without ${INDEX_REF_YEAR} data use their closest year: ${offBaseline.join('; ')}.`;
+    }
+    modeExplain.textContent = explain;
+  } else {
+    if (units.length === 1) {
+      modeExplain.textContent = `Raw values. All visible series share the unit "${units[0]}".`;
+    } else {
+      modeExplain.textContent = `Raw values. Visible series use different units — comparing magnitudes across them isn't meaningful (e.g. 36,000 births vs 200 applications). Use the indexed view to compare shapes of change.`;
+    }
+  }
+
+  renderStats();
+}
+
+function showTooltip(year) {
+  const rows = [];
+  state.active.forEach(key => {
+    const s = SERIES[key];
+    const pt = s.points.find(p => p[0] === year);
+    if (pt) {
+      const projTag = isProjection(pt) ? ' <span style="opacity:0.65; font-size:9px;">(proj.)</span>' : '';
+      rows.push(`
+        <div class="t-row">
+          <span class="label"><span class="swatch" style="background: ${s.color};"></span>${s.label}${projTag}</span>
+          <span class="value">${pt[1].toLocaleString()}</span>
+        </div>
+      `);
+    }
+  });
+  if (rows.length === 0) {
+    tooltip.style.opacity = 0;
+    return;
+  }
+  tooltip.innerHTML = `<div class="t-year">${year}</div>${rows.join('')}`;
+  tooltip.style.opacity = 1;
+}
+
+function moveTooltip(e) {
+  const rect = chartWrap.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  const tw = tooltip.offsetWidth;
+  const th = tooltip.offsetHeight;
+  let left = x + 16;
+  let top = y - th / 2;
+  if (left + tw > rect.width - 8) left = x - tw - 16;
+  if (left < 8) left = 8;
+  if (top < 8) top = 8;
+  if (top + th > rect.height - 8) top = rect.height - th - 8;
+  tooltip.style.left = left + 'px';
+  tooltip.style.top = top + 'px';
+}
+
+function hideTooltip() {
+  tooltip.style.opacity = 0;
+}
+
+// ============================================================
+// STATS STRIP
+// ============================================================
+function renderStats() {
+  const container = document.getElementById('statsStrip');
+  const stats = [];
+  state.active.forEach(key => {
+    const s = SERIES[key];
+    const pts = s.points;
+    if (pts.length === 0) return;
+
+    // Stats are based on VERIFIED points only - projections are excluded
+    // from trend statistics to avoid misrepresenting them as data.
+    const verifiedPts = pts.filter(p => !isProjection(p));
+    const projectedPts = pts.filter(p => isProjection(p));
+
+    if (verifiedPts.length === 0) {
+      // Only projections - skip
+      return;
+    }
+    if (verifiedPts.length === 1) {
+      stats.push({
+        label: s.label,
+        latest: verifiedPts[0][1],
+        latestYr: verifiedPts[0][0],
+        color: s.color,
+        single: true,
+        hasProjections: projectedPts.length > 0,
+      });
+      return;
+    }
+    const sorted = [...verifiedPts].sort((a, b) => a[0] - b[0]);
+    const first = sorted[0], last = sorted[sorted.length - 1];
+    const peakPt = sorted.reduce((a, b) => b[1] > a[1] ? b : a);
+    const troughPt = sorted.reduce((a, b) => b[1] < a[1] ? b : a);
+    const pct = ((last[1] - first[1]) / first[1]) * 100;
+    stats.push({
+      label: s.label,
+      latest: last[1],
+      latestYr: last[0],
+      firstYr: first[0],
+      pct: pct,
+      peak: peakPt[1], peakYr: peakPt[0],
+      trough: troughPt[1], troughYr: troughPt[0],
+      color: s.color,
+      hasProjections: projectedPts.length > 0,
+    });
+  });
+
+  if (stats.length === 0) {
+    container.innerHTML = '<div class="stat"><div class="label">No series selected</div><div class="value">—</div></div>';
+    return;
+  }
+
+  container.innerHTML = stats.map(s => {
+    const projNote = s.hasProjections
+      ? '<div class="delta" style="font-style: italic; opacity: 0.7;">+ projections (not in stats)</div>'
+      : '';
+    if (s.single) {
+      return `
+        <div class="stat" style="border-top: 3px solid ${s.color};">
+          <div class="label">${s.label}</div>
+          <div class="value">${s.latest.toLocaleString()}<span class="unit">(${s.latestYr})</span></div>
+          <div class="delta">single data point — no trend</div>
+          ${projNote}
+        </div>
+      `;
+    }
+    const deltaClass = s.pct < 0 ? 'neg' : s.pct > 0 ? 'pos' : '';
+    const arrow = s.pct < 0 ? '↓' : s.pct > 0 ? '↑' : '→';
+    return `
+      <div class="stat" style="border-top: 3px solid ${s.color};">
+        <div class="label">${s.label}</div>
+        <div class="value">${s.latest.toLocaleString()}<span class="unit">latest</span></div>
+        <div class="delta ${deltaClass}">${arrow} ${Math.abs(s.pct).toFixed(1)}% (${s.firstYr}→${s.latestYr})</div>
+        <div class="delta">Peak ${s.peak.toLocaleString()} (${s.peakYr})</div>
+        <div class="delta">Trough ${s.trough.toLocaleString()} (${s.troughYr})</div>
+        ${projNote}
+      </div>
+    `;
+  }).join('');
+}
+
+// ============================================================
+// EVENT HANDLERS
+// ============================================================
+document.querySelectorAll('.toggle').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const key = btn.dataset.series;
+    if (state.active.has(key)) state.active.delete(key);
+    else state.active.add(key);
+    btn.classList.toggle('active');
+    render();
+  });
+});
+
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.mode = btn.dataset.mode;
+    render();
+  });
+});
+
+// ============================================================
+// COHORT TRACER
+// ============================================================
+const cohortSlider = document.getElementById('cohortSlider');
+const cohortReadout = document.getElementById('cohortReadout');
+const cohortFlow = document.getElementById('cohortFlow');
+const cohortYearDisplay = document.getElementById('cohortYearDisplay');
+
+function updateCohort() {
+  const year = parseInt(cohortSlider.value);
+  state.cohortYear = year;
+  const births = valueAt('births', year);
+  if (!births) return;
+  const eastCty = Math.round(births * 0.145);
+  const estK = Math.round(eastCty * 0.945);
+  const kStartYear = year + 5;
+  const kYearLabel = toSchoolYear(kStartYear);
+
+  cohortYearDisplay.innerHTML = `${year} <em>→ K class of ${kYearLabel}</em>`;
+
+  const peakBirths = Math.max(...SERIES.births.points.map(p => p[1]));
+  const troughBirths = Math.min(...SERIES.births.points.map(p => p[1]));
+  const pctOffPeak = ((births - peakBirths) / peakBirths * 100).toFixed(1);
+
+  let context = '';
+  if (year === 2021) context = 'The pandemic-conception trough year — these kids start K in 2026–27.';
+  else if (year === 2023) context = 'The trough in the verified series — these kids start K in 2028–29.';
+  else if (year === 2015) context = 'The peak year of the visible decade.';
+  else if (births === peakBirths) context = 'This is the peak.';
+  else if (births === troughBirths) context = 'This is the trough.';
+  else if (births < 37500) context = 'Among the smaller cohorts in the visible decade.';
+  else context = 'Above average for the visible decade.';
+
+  cohortReadout.innerHTML = `
+    <span class="label">Born ${year} · entering kindergarten ${kYearLabel}</span>
+    <span class="big">${eastCty.toLocaleString()}</span>
+    <div>estimated East County kindergarten-age children</div>
+    <div style="margin-top: 12px; font-size: 14px;">
+      <em>${context} ${births === peakBirths ? '' : `${Math.abs(pctOffPeak)}% ${parseFloat(pctOffPeak) < 0 ? 'below' : 'above'} the decade peak.`}</em>
+    </div>
+  `;
+
+  cohortFlow.innerHTML = `
+    <div class="flow-node" style="border-top: 3px solid var(--c-births);">
+      <div class="y">${year} · COUNTY</div>
+      <div class="v">${births.toLocaleString()}</div>
+      <div class="desc">SD County births</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node" style="border-top: 3px solid var(--c-cohort);">
+      <div class="y">${year} · EAST CTY</div>
+      <div class="v">${eastCty.toLocaleString()}</div>
+      <div class="desc">East County share (14.5%)</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node" style="border-top: 3px solid var(--c-cvusd);">
+      <div class="y">${kYearLabel} · K-ENROLL</div>
+      <div class="v">~${estK.toLocaleString()}</div>
+      <div class="desc">Likely K-enrolled (≈94.5%)</div>
+    </div>
+  `;
+}
+
+cohortSlider.addEventListener('input', updateCohort);
+updateCohort();
+
+// ============================================================
+// YEAR SNAPSHOT — split into "enrollment that year" vs "demographic context"
+// to avoid misleading framing of unrelated cohorts
+// ============================================================
+function renderSnapshot() {
+  const yearSelector = document.getElementById('yearSelector');
+  const body = document.getElementById('snapshotBody');
+  // School years to show: 2019-20 through 2026-27 (last two are projection territory)
+  const visibleSchoolYears = [...YEARS_SCHOOL.slice(5), '2025-26', '2026-27'];
+
+  yearSelector.innerHTML = visibleSchoolYears.map(y =>
+    `<button class="year-btn ${y === state.snapshotYear ? 'active' : ''}" data-year="${y}">${y}</button>`
+  ).join('');
+
+  document.querySelectorAll('.year-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.snapshotYear = btn.dataset.year;
+      renderSnapshot();
+    });
+  });
+
+  const yr = state.snapshotYear;
+  const startYr = parseInt(yr.split('-')[0]);
+
+  // Enrollment data - distinguish projected from verified
+  const enrollmentBlocks = [];
+  ['cvusd', 'lmsv', 'guhsd', 'pca', 'lfcs', 'bostonia', 'kidinnu'].forEach(key => {
+    const s = SERIES[key];
+    const pt = s.points.find(p => p[0] === startYr);
+    if (pt) {
+      const projected = isProjection(pt);
+      let ctx = '';
+      if (projected) ctx = 'PROJECTION — not yet verified by CDE/ed-data.';
+      else if (key === 'cvusd' && yr === '2024-25') ctx = 'Up 18.7% YoY — newcomer surge.';
+      else if (key === 'guhsd' && yr === '2024-25') ctx = 'Includes Helix & Steele Canyon charters.';
+      else if (key === 'pca') ctx = 'Independent study charter (Dehesa-authorized).';
+      else if (key === 'bostonia') ctx = 'Counted within CVUSD as dependent charter.';
+      enrollmentBlocks.push({
+        label: `${s.label} · ${yr}${projected ? ' (proj.)' : ''}`,
+        val: pt[1].toLocaleString(),
+        color: s.color,
+        ctx,
+        projected,
+      });
+    }
+  });
+
+  // Demographic context — note the proper cohort relationship
+  const kBirthYr = startYr - 5;
+  const kBirths = valueAt('births', kBirthYr);
+  const currentYrBirths = valueAt('births', startYr);
+  const currentYrApps = valueAt('apps', startYr);
+
+  const demoBlocks = [];
+  if (kBirths) {
+    demoBlocks.push({
+      label: `K-class birth year (${kBirthYr})`,
+      val: kBirths.toLocaleString(),
+      color: 'var(--c-births)',
+      ctx: `These are the births that became the K class of ${yr}.`,
+    });
+  }
+  if (currentYrBirths && currentYrBirths !== kBirths) {
+    const futureK = toSchoolYear(startYr + 5);
+    demoBlocks.push({
+      label: `Births during ${startYr}`,
+      val: currentYrBirths.toLocaleString(),
+      color: 'var(--c-births)',
+      ctx: `These children will enter kindergarten in ${futureK} — a different cohort than the K class above.`,
+    });
+  }
+  if (currentYrApps) {
+    demoBlocks.push({
+      label: `LFCS Kinder Apps ${startYr}`,
+      val: currentYrApps.toLocaleString(),
+      color: 'var(--c-apps)',
+      ctx: 'Applications received this calendar year — leading demand signal.',
+    });
+  }
+
+  let html = '';
+
+  if (enrollmentBlocks.length > 0) {
+    html += `<div class="snapshot-section-head">Enrollment that year</div>`;
+    html += `<div class="snapshot-grid">${enrollmentBlocks.map(b => {
+      // Projected blocks get a yellow background and dashed border to match
+      // the spreadsheet treatment - signals "not verified yet"
+      const projStyle = b.projected
+        ? 'background: #fff7e0; border-left-style: dashed; padding: 12px 12px 12px 16px;'
+        : 'padding-left: 16px;';
+      return `
+      <div class="snapshot-block" style="border-left: 3px solid ${b.color}; ${projStyle}">
+        <div class="label">${b.label}</div>
+        <div class="big-val" style="color: ${b.color};">${b.val}</div>
+        ${b.ctx ? `<div class="ctx"${b.projected ? ' style="color: #8a6914; font-weight: 500;"' : ''}>${b.ctx}</div>` : ''}
+      </div>`;
+    }).join('')}</div>`;
+  } else {
+    html += `<div class="snapshot-empty">No verified enrollment data collected for this year.</div>`;
+  }
+
+  if (demoBlocks.length > 0) {
+    html += `<div class="snapshot-section-head">Demographic context</div>`;
+    html += `<div class="snapshot-grid">${demoBlocks.map(b => `
+      <div class="snapshot-block" style="border-left: 3px solid ${b.color}; padding-left: 16px;">
+        <div class="label">${b.label}</div>
+        <div class="big-val" style="color: ${b.color};">${b.val}</div>
+        ${b.ctx ? `<div class="ctx">${b.ctx}</div>` : ''}
+      </div>`).join('')}</div>`;
+  }
+
+  body.innerHTML = html;
+}
+renderSnapshot();
+
+// Initial render
+render();
+</script>
+</body>
+</html>
